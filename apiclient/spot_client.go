@@ -87,7 +87,7 @@ func (client *ApiClient) CancelSpotOrder(orderId models.OrderID) (*models.Generi
 }
 
 func (client *ApiClient) CancelSpotOrderByClientID(clientOrderId models.OrderID) (*models.GenericResponse[any], error) {
-	path := models.V1SpotOrdersPath + "/client:" + string(clientOrderId)
+	path := models.V1SpotOrdersPath + "/" + models.V1SpotClientOrderIDPrefix + string(clientOrderId)
 
 	res, err := NewHttpJsonClient[any, models.GenericResponse[any]](
 		client.ApiEndpoint + path).SetHeaders(client.getHeaders("DELETE", path, nil)).Delete(nil)
@@ -100,4 +100,52 @@ func (client *ApiClient) CancelSpotOrderByClientID(clientOrderId models.OrderID)
 	}
 
 	return res, nil
+}
+
+func (client *ApiClient) GetSpotFills(params models.FillParams) (*models.V1PageRes[models.ApiFill], error) {
+	path := models.V1SpotFillsPath
+	path += params.GetFillPathParams()
+
+	res, err := NewHttpJsonClient[any, models.V1PageRes[models.ApiFill]](
+		client.ApiEndpoint + path).SetHeaders(client.getHeaders("GET", path, nil)).Get(nil)
+
+	if err != nil {
+		return nil, fmt.Errorf("error in http req spot get fills: %w", err)
+	}
+
+	return res, err
+}
+
+func (client *ApiClient) GetSpotFillsByOrderID(orderID models.OrderID) (*models.GenericResponse[[]models.ApiFill], error) {
+	path := models.V1SpotOrdersPath + "/" + string(orderID) + "/fills"
+
+	res, err := NewHttpJsonClient[any, models.GenericResponse[[]models.ApiFill]](
+		client.ApiEndpoint + path).SetHeaders(client.getHeaders("GET", path, nil)).Get(nil)
+
+	if err != nil {
+		return nil, fmt.Errorf("error in http req spot get fill by order ID: %w", err)
+	}
+
+	if !res.Success {
+		return res, fmt.Errorf("bad request spot fill by order id %s: %v", orderID, res.Error)
+	}
+
+	return res, err
+}
+
+func (client *ApiClient) GetSpotFillsByClientOrderID(orderID models.OrderID) (*models.GenericResponse[[]models.ApiFill], error) {
+	path := models.V1SpotOrdersPath + "/" + models.V1SpotClientOrderIDPrefix + string(orderID) + "/fills"
+
+	res, err := NewHttpJsonClient[any, models.GenericResponse[[]models.ApiFill]](
+		client.ApiEndpoint + path).SetHeaders(client.getHeaders("GET", path, nil)).Get(nil)
+
+	if err != nil {
+		return nil, fmt.Errorf("error in http req spot get fill by client order ID: %w", err)
+	}
+
+	if !res.Success {
+		return res, fmt.Errorf("bad request spot fill by client order id %s: %v", orderID, res.Error)
+	}
+
+	return res, err
 }

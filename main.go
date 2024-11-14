@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/Enclave-Markets/enclave-go/apiclient"
 	"github.com/Enclave-Markets/enclave-go/models"
@@ -101,4 +103,70 @@ func main() {
 	}
 
 	fmt.Println("order state:", orderResp.Result.State)
+
+	var side models.BidAsk
+	switch {
+	case len(book.Result.Asks) != 0:
+		side = models.Bid
+	case len(book.Result.Bids) != 0:
+		side = models.Ask
+	default:
+		fmt.Println("orderbook is empty -- cannot trigger a fill")
+		return
+	}
+
+	clientOrderID := models.OrderID(strconv.FormatUint(uint64(time.Now().UnixNano()), 10))
+	orderResp, err = client.AddSpotOrder(
+		models.AddOrderReq{
+			Market:        market,
+			Side:          side,
+			Size:          baseMin,
+			Type:          models.OrderTypeMarket,
+			ClientOrderID: clientOrderID,
+		},
+	)
+	if err != nil {
+		fmt.Println("failed to place market order:", err)
+		return
+	}
+
+	if orderResp.Result.State != models.FullyFilled {
+		fmt.Println("market order did not fill:", orderResp.Result.State)
+		return
+	}
+	fmt.Println("market order placed, current state:", orderResp.Result.State)
+
+	// lets find the fills
+	fillsResp, err := client.GetSpotFillsByOrderID(orderResp.Result.OrderID)
+	if err != nil {
+		fmt.Println("unable to find fill:", err)
+		return
+	}
+	if len(fillsResp.Result) == 0 {
+		fmt.Println("could not find fills!")
+	}
+	fmt.Println("found n-fills for market order:", len(fillsResp.Result))
+
+	// lets find the fills by client order ID this time
+	fillsResp, err = client.GetSpotFillsByClientOrderID(orderResp.Result.ClientOrderID)
+	if err != nil {
+		fmt.Println("unable to find fill:", err)
+		return
+	}
+	if len(fillsResp.Result) == 0 {
+		fmt.Println("could not find fills!")
+	}
+	fmt.Println("found n-fills by client order ID for market order:", len(fillsResp.Result))
+
+	// now find all fills
+	allFillsResp, err := client.GetSpotFills(models.FillParams{})
+	if err != nil {
+		fmt.Println("unable to find all fills:", err)
+		return
+	}
+	if len(allFillsResp.Result) == 0 {
+		fmt.Println("could not find any fills!")
+	}
+	fmt.Println("found n-fills any orders:", len(allFillsResp.Result))
+
 }

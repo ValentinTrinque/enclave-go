@@ -12,24 +12,22 @@ const (
 	V1MarketsPath = "/v1/markets"
 
 	// Spot trading
-	V1SpotOrdersPath           = "/v1/orders"
-	V1SpotIndividualOrdersPath = "/v1/orders/:orderID"
-	V1SpotOrdersCSVPath        = "/v1/orders/csv"
-
-	V1SpotFillsPath          = "/v1/fills"
-	V1SpotFillsByOrderIDPath = "/v1/orders/:orderID/fills"
-	V1SpotFillsCSVPath       = "/v1/fills/csv"
-
-	V1SpotDepthPath   = "/v1/depth"
-	V1SpotCandlesPath = "/v1/candles"
-
-	// Spot Trading View endpoints
-	V1SpotTradingViewSymbolInfoPath = "/v1/symbol_info"
-	V1SpotTradingViewStreamingPath  = "/v1/streaming"
-	V1SpotTradingViewHistoryPath    = "/v1/history"
+	V1SpotOrdersPath = "/v1/orders"
+	V1SpotFillsPath  = "/v1/fills"
+	V1SpotDepthPath  = "/v1/depth"
 
 	V1SpotClientOrderIDPrefix = "client:"
 )
+
+type V1PageRes[T any] struct {
+	Result   []*T
+	PageInfo APIPageInfo
+}
+
+type APIPageInfo struct {
+	PrevCursor string `json:"prevCursor"`
+	NextCursor string `json:"nextCursor"`
+}
 
 type AccountID string
 
