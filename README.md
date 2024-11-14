@@ -12,7 +12,7 @@
 
 This is an unofficial Go SDK for [Enclave Markets](https://enclave.market/) and the interface is subject to change.
 
-Currenlty, it does not support all API endpoints and provides a simple interface for interacting with the spot market [Enclave API](https://docs.enclave.market/).
+It provides a simple interface for interacting with the spot market [Enclave API](https://docs.enclave.market/).
 
 
 ## Installation
