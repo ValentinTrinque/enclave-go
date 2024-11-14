@@ -10,9 +10,9 @@
         
 </p>
 
-This is and example Go SDK for [Enclave Markets](https://enclave.market/). 
+This is an unofficial Go SDK for [Enclave Markets](https://enclave.market/) and the interface is subject to change.
 
-It provides a simple interface for interacting with the spot market [Enclave API](https://docs.enclave.market/).
+Currenlty, it does not support all API endpoints and provides a simple interface for interacting with the spot market [Enclave API](https://docs.enclave.market/).
 
 
 ## Installation
@@ -27,12 +27,12 @@ go get github.com/Enclave-Markets/enclave-go
 package main
 
 import (
-	"github.com/Enclave-Markets/enclave-go/api_client"
+	"github.com/Enclave-Markets/enclave-go/apiclient"
 )
 
 func main() {
 
-	client, err := api_client.NewApiClientFromEnv("sandbox")
+	client, err := apiclient.NewApiClientFromEnv("sandbox")
 	if err != nil {
 		return
 	}
@@ -50,8 +50,8 @@ func main() {
 An example of interacting with a spot market on Enclave's sandbox environment can be found in `main.go` and can be run using:
 
 ```shell
-export enclave_key="YOUR_API_KEY"
-export enclave_secret="YOUR_API_SECRET"
+export ENCLAVE_KEY="YOUR_API_KEY"
+export ENCLAVE_SECRET="YOUR_API_SECRET"
 go run ./...
 ```
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Enclave-Markets/enclave-go/api_client"
+	"github.com/Enclave-Markets/enclave-go/apiclient"
 	"github.com/Enclave-Markets/enclave-go/models"
 	"github.com/shopspring/decimal"
 )
@@ -15,15 +15,15 @@ func main() {
 	symbol := models.Symbol("AVAX")
 	market := models.Market("AVAX-USDC")
 
-	client, err := api_client.NewApiClientFromEnv("sandbox")
+	client, err := apiclient.NewApiClientFromEnv("sandbox")
 	if err != nil {
 		fmt.Println("failed to create client", err)
 		return
 	}
 
 	client.WithApiKey(
-		os.Getenv("enclave_key"),
-		os.Getenv("enclave_secret"),
+		os.Getenv("ENCLAVE_KEY"),
+		os.Getenv("ENCLAVE_SECRET"),
 	)
 
 	client.WaitForEndpoint()
