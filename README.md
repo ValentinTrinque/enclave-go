@@ -37,6 +37,11 @@ func main() {
 		return
 	}
 
+	client.WithApiKey(
+		os.Getenv("ENCLAVE_KEY"),
+		os.Getenv("ENCLAVE_SECRET"),
+	)
+
 	client.WaitForEndpoint()
 	_, err = client.Hello()
 	if err != nil {

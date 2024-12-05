@@ -111,7 +111,6 @@ func NewApiClientFromEnv(env string) (*ApiClient, error) {
 
 func (client *ApiClient) WaitForEndpoint() {
 	for {
-		fmt.Println("waiting for the service to become available ......")
 		if _, err := client.GetPublicStatus(); err != nil {
 			time.Sleep(2 * time.Second)
 			continue
