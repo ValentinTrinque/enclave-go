@@ -38,6 +38,38 @@ func (client *ApiClient) GetSpotDepthBook(market models.Market) (*models.Generic
 	return res, nil
 }
 
+func (client *ApiClient) GetSpotOrdersByMarket(market string) (*models.GenericResponse[[]models.ApiOrder], error) {
+	path := models.V1SpotOrdersPath + "?market=" + market
+
+	res, err := NewHttpJsonClient[any, models.GenericResponse[[]models.ApiOrder]](
+		client.ApiEndpoint + path).SetHeaders(client.getHeaders("GET", path, nil)).Get(nil)
+
+	if err != nil {
+		return nil, fmt.Errorf("error in http req spot get orders: %w", err)
+	}
+	if !res.Success {
+		return res, fmt.Errorf("bad request spot get orders: %v", res.Error)
+	}
+
+	return res, nil
+}
+
+func (client *ApiClient) GetSpotOrders() (*models.GenericResponse[[]models.ApiOrder], error) {
+	path := models.V1SpotOrdersPath
+
+	res, err := NewHttpJsonClient[any, models.GenericResponse[[]models.ApiOrder]](
+		client.ApiEndpoint + path).SetHeaders(client.getHeaders("GET", path, nil)).Get(nil)
+
+	if err != nil {
+		return nil, fmt.Errorf("error in http req spot get orders: %w", err)
+	}
+	if !res.Success {
+		return res, fmt.Errorf("bad request spot get orders: %v", res.Error)
+	}
+
+	return res, nil
+}
+
 func (client *ApiClient) GetSpotOrder(orderId models.OrderID) (*models.GenericResponse[models.ApiOrder], error) {
 	path := models.V1SpotOrdersPath + "/" + string(orderId)
 
